@@ -2,9 +2,11 @@ package br.eti.hussamaismail.calculexpr;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluator;
+import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluatorImpl;
 
 /**
  * This class describe the unit tests responsible for evaluating the basic arithmetics expressions
@@ -15,7 +17,12 @@ import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluator;
 public class BasicArithmetics {
 
   private String expression;
-  private ExpressionEvaluator evaluator;
+  private static ExpressionEvaluator evaluator;
+
+  @BeforeClass
+  public static void prepare() {
+    evaluator = ExpressionEvaluatorImpl.getInstance();
+  }
 
   @Test
   public void testAddition1() {

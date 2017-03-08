@@ -42,4 +42,19 @@ public interface ExpressionEvaluator {
    */
   double eval(String expression);
 
+  /**
+   * Method responsible for showing the result of all previous expression in cache.
+   */
+  void showAllBindings();
+
+  /**
+   * Method responsible for erasing all results of previous expressions in cache.
+   */
+  void removeAllBindings();
+
+  /**
+   * Method responsible for removing specific bindings.
+   */
+  void removeBindings(String[] strings);
+
 }

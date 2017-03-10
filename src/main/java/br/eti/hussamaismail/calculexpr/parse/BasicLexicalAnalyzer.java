@@ -10,12 +10,14 @@ import br.eti.hussamaismail.calculexpr.domain.Token;
 import br.eti.hussamaismail.calculexpr.domain.TokenType;
 
 /**
- * This class contains a simple implementation for a lexical analyzer used by the ExpressionEvaluator.
+ * This class contains a simple implementation of a lexical analyzer used by the
+ * ExpressionEvaluator.
  * 
  * @author Hussama Ismail
  */
 public class BasicLexicalAnalyzer implements LexicalAnalyzer {
 
+  private static final char DIVISION_SYMBOL = '/';
   private static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]";
   private static final String REGEXP_OPERATOR = "\\+|-|\\*|/";
   private static final String REGEXP_FUNCTION = "sin|cos|sqrt|log";
@@ -41,6 +43,7 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
     final List<Token> tokens = new ArrayList<>();
     final StringReader stringReader = new StringReader(expression);
     final StreamTokenizer tokenizer = new StreamTokenizer(stringReader);
+    tokenizer.ordinaryChar(DIVISION_SYMBOL);
     try {
       while (StreamTokenizer.TT_EOF != tokenizer.nextToken()) {
         switch (tokenizer.ttype) {
@@ -63,7 +66,7 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
   }
 
   /**
-   * This method is responsible to recognize the type of the token
+   * This method is responsible to recognize the type of the token.
    * 
    * @param value
    * @return

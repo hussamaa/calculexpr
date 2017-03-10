@@ -6,8 +6,8 @@ import java.util.List;
 import br.eti.hussamaismail.calculexpr.domain.Token;
 
 /**
- * This interface represents a lexical analyzer. In particular, it is responsible for parsing an
- * expression and retrieve a set of tokens.
+ * This interface represents a lexical analyzer. In particular, this component is responsible for
+ * parsing an expression and retrieving a set of tokens.
  * 
  * @author Hussama Ismail
  */

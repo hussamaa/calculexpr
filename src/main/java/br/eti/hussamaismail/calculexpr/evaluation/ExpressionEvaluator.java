@@ -1,4 +1,4 @@
-package br.eti.hussamaismail.calculexpr.eval;
+package br.eti.hussamaismail.calculexpr.evaluation;
 
 /**
  * This interface describes the methods required in an expression evaluator used in this project.

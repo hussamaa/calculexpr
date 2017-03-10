@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluator;
-import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluatorImpl;
+import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluator;
+import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
 
 /**
  * Main class for calculexpr project.

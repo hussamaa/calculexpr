@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluator;
-import br.eti.hussamaismail.calculexpr.eval.ExpressionEvaluatorImpl;
+import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluator;
+import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
 
 /**
  * This class describe the unit tests responsible for evaluating the basic arithmetics expressions

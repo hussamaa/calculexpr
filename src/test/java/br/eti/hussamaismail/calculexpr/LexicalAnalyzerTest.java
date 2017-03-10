@@ -8,9 +8,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.eti.hussamaismail.calculexpr.domain.Token;
+import br.eti.hussamaismail.calculexpr.domain.TokenType;
+import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
-import br.eti.hussamaismail.calculexpr.parse.Token;
-import br.eti.hussamaismail.calculexpr.parse.TokenType;
 
 /**
  * This class tests some methods presents in the small lexical analyzer.
@@ -23,7 +24,7 @@ public class LexicalAnalyzerTest {
 
   @Before
   public void prepare() {
-    lexicalAnalyzer = LexicalAnalyzer.getInstance();
+    lexicalAnalyzer = BasicLexicalAnalyzer.getInstance();
   }
 
   @Test

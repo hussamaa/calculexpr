@@ -14,7 +14,7 @@ import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
  * 
  * @author Hussama Ismail
  */
-public class BasicArithmeticsTest {
+public class ArithmeticsTest {
 
   private String expression;
   private static ExpressionEvaluator evaluator;

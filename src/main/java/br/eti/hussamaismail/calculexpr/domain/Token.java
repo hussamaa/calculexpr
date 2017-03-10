@@ -1,4 +1,4 @@
-package br.eti.hussamaismail.calculexpr.parse;
+package br.eti.hussamaismail.calculexpr.domain;
 
 /**
  * This class represents a token object, which is composed by a value and a type.
@@ -7,10 +7,10 @@ package br.eti.hussamaismail.calculexpr.parse;
  */
 public class Token {
 
-  private String value;
+  private Object value;
   private TokenType type;
 
-  public String getValue() {
+  public Object getValue() {
     return value;
   }
 
@@ -18,7 +18,7 @@ public class Token {
     return type;
   }
 
-  public void setValue(final String value) {
+  public void setValue(final Object value) {
     this.value = value;
   }
 

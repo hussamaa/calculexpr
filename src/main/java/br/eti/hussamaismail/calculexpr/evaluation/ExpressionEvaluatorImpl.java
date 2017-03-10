@@ -34,9 +34,7 @@ public class ExpressionEvaluatorImpl implements ExpressionEvaluator {
 
   /** {@inheritDoc} */
   public double eval(final String expression) {
-    //
-    // TODO: parse and evaluate expr; return its value
-    //
+
     return 0;
   }
 

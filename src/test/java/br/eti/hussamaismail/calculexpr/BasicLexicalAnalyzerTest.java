@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import br.eti.hussamaismail.calculexpr.domain.Bracket;
 import br.eti.hussamaismail.calculexpr.domain.Function;
-import br.eti.hussamaismail.calculexpr.domain.Number;
+import br.eti.hussamaismail.calculexpr.domain.Operand;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
@@ -167,18 +167,18 @@ public class BasicLexicalAnalyzerTest {
     assertEquals(symbols.size(), 14);
     assertTrue(symbols.get(0) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_START, ((Bracket) symbols.get(0)).getType());
-    assertTrue(symbols.get(1) instanceof Number);
-    assertEquals(2.0, ((Number) symbols.get(1)).getValue(), 0.1);
+    assertTrue(symbols.get(1) instanceof Operand);
+    assertEquals(2.0, ((Operand) symbols.get(1)).getValue(), 0.1);
     assertTrue(symbols.get(2) instanceof Operator);
     assertEquals(OperatorType.ADDITION, ((Operator) symbols.get(2)).getType());
     assertTrue(symbols.get(3) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_START, ((Bracket) symbols.get(3)).getType());
-    assertTrue(symbols.get(4) instanceof Number);
-    assertEquals(3.0, ((Number) symbols.get(4)).getValue(), 0.1);
+    assertTrue(symbols.get(4) instanceof Operand);
+    assertEquals(3.0, ((Operand) symbols.get(4)).getValue(), 0.1);
     assertTrue(symbols.get(5) instanceof Operator);
     assertEquals(OperatorType.MULTIPLICATION, ((Operator) symbols.get(5)).getType());
-    assertTrue(symbols.get(6) instanceof Number);
-    assertEquals(2.0, ((Number) symbols.get(6)).getValue(), 0.1);
+    assertTrue(symbols.get(6) instanceof Operand);
+    assertEquals(2.0, ((Operand) symbols.get(6)).getValue(), 0.1);
     assertTrue(symbols.get(7) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_END, ((Bracket) symbols.get(7)).getType());
     assertTrue(symbols.get(8) instanceof Operator);
@@ -187,8 +187,8 @@ public class BasicLexicalAnalyzerTest {
     assertEquals(FunctionType.SIN, ((Function) symbols.get(9)).getType());
     assertTrue(symbols.get(10) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_START, ((Bracket) symbols.get(10)).getType());
-    assertTrue(symbols.get(11) instanceof Number);
-    assertEquals(10.0, ((Number) symbols.get(11)).getValue(), 0.1);
+    assertTrue(symbols.get(11) instanceof Operand);
+    assertEquals(10.0, ((Operand) symbols.get(11)).getValue(), 0.1);
     assertTrue(symbols.get(12) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_END, ((Bracket) symbols.get(12)).getType());
     assertTrue(symbols.get(13) instanceof Bracket);
@@ -212,12 +212,12 @@ public class BasicLexicalAnalyzerTest {
   private void checkSymbolsOfTwoOperandOperations(final List<Symbol> symbols, final double lhs,
       final OperatorType operatorType, final double rhs) {
     assertEquals(symbols.size(), 3);
-    assertTrue(symbols.get(0) instanceof Number);
-    assertEquals(2.0, ((Number) symbols.get(0)).getValue(), 0.1);
+    assertTrue(symbols.get(0) instanceof Operand);
+    assertEquals(2.0, ((Operand) symbols.get(0)).getValue(), 0.1);
     assertTrue(symbols.get(1) instanceof Operator);
     assertEquals(operatorType, ((Operator) symbols.get(1)).getType());
-    assertTrue(symbols.get(2) instanceof Number);
-    assertEquals(3.0, ((Number) symbols.get(2)).getValue(), 0.1);
+    assertTrue(symbols.get(2) instanceof Operand);
+    assertEquals(3.0, ((Operand) symbols.get(2)).getValue(), 0.1);
   }
 
   private void checkSymbolsOfFunctionCalls(final List<Symbol> symbols,
@@ -227,8 +227,8 @@ public class BasicLexicalAnalyzerTest {
     assertEquals(functionType, ((Function) symbols.get(0)).getType());
     assertTrue(symbols.get(1) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_START, ((Bracket) symbols.get(1)).getType());
-    assertTrue(symbols.get(2) instanceof Number);
-    assertEquals(param, ((Number) symbols.get(2)).getValue(), 0.1);
+    assertTrue(symbols.get(2) instanceof Operand);
+    assertEquals(param, ((Operand) symbols.get(2)).getValue(), 0.1);
     assertTrue(symbols.get(3) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_END, ((Bracket) symbols.get(3)).getType());
   }

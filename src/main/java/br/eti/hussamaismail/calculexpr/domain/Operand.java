@@ -5,15 +5,15 @@ package br.eti.hussamaismail.calculexpr.domain;
  * 
  * @author Hussama Ismail
  */
-public class Number implements Symbol {
+public class Operand implements Symbol {
 
   private double value;
 
-  public Number() {
+  public Operand() {
     super();
   }
 
-  public Number(final double value) {
+  public Operand(final double value) {
     super();
     this.value = value;
   }
@@ -28,7 +28,7 @@ public class Number implements Symbol {
 
   @Override
   public String toString() {
-    return "Number [value=" + value + "]";
+    return "Operand [value=" + value + "]";
   }
   
 }

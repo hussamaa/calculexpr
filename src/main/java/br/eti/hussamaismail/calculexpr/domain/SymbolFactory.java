@@ -61,7 +61,7 @@ public class SymbolFactory {
     Symbol symbol = null;;
 
     if (token.matches(REGEXP_NUMBER)) {
-      symbol = new Number(Double.valueOf(token));
+      symbol = new Operand(Double.valueOf(token));
     } else if (token.matches(REGEXP_OPERATOR_ADDITION)) {
       symbol = new Operator(OperatorType.ADDITION);
     } else if (token.matches(REGEXP_OPERATOR_SUBTRACTION)) {

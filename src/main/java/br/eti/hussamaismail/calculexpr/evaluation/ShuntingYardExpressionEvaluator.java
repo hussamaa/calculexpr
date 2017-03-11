@@ -10,7 +10,7 @@ import java.util.Stack;
 
 import br.eti.hussamaismail.calculexpr.domain.Bracket;
 import br.eti.hussamaismail.calculexpr.domain.Function;
-import br.eti.hussamaismail.calculexpr.domain.Number;
+import br.eti.hussamaismail.calculexpr.domain.Operand;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
@@ -30,6 +30,7 @@ import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   private static ShuntingYardExpressionEvaluator instance;
+  private static final String ANSWER_SYMBOL = "_";
 
   private LexicalAnalyzer lexicalAnalyzer;
   private Stack<Symbol> operatorStack;
@@ -62,19 +63,21 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     final Iterator<Symbol> symbolsIterator = sortedSymbols.iterator();
     while (symbolsIterator.hasNext()) {
       final Symbol symbol = symbolsIterator.next();
-      if (symbol instanceof Number) {
+      if (symbol instanceof Operand) {
         operatorStack.push(symbol);
       } else if (symbol instanceof Operator) {
         checkArithmeticOperationRequirements();
         double result = performArithmeticOperation((Operator) symbol);
-        operatorStack.push(new Number(result));
+        operatorStack.push(new Operand(result));
       } else if (symbol instanceof Function) {
         checkArithmeticFunctionRequirements(symbolsIterator);
         double result = performArithmeticFunction((Function) symbol, symbolsIterator.next());
-        operatorStack.push(new Number(result));
+        operatorStack.push(new Operand(result));
       }
     }
-    return ((Number) operatorStack.pop()).getValue();
+    double answer = ((Operand) operatorStack.pop()).getValue();
+    bindings.put(ANSWER_SYMBOL, answer);
+    return answer;
   }
 
   /** {@inheritDoc} */
@@ -123,7 +126,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     final List<Symbol> sortedSymbols = new LinkedList<>();
 
     for (final Symbol symbol : symbols) {
-      if (symbol instanceof Number) {
+      if (symbol instanceof Operand) {
         sortedSymbols.add(symbol);
       } else if (symbol instanceof Function) {
         sortedSymbols.add(symbol);
@@ -187,8 +190,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * @return
    */
   private double performArithmeticOperation(final Operator operator) {
-    final Number rightHandSide = (Number) operatorStack.pop();
-    final Number leftHandSide = (Number) operatorStack.pop();
+    final Operand rightHandSide = (Operand) operatorStack.pop();
+    final Operand leftHandSide = (Operand) operatorStack.pop();
     double result = 0;
     switch (operator.getType()) {
       case ADDITION:
@@ -216,7 +219,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * @return
    */
   private double performArithmeticFunction(final Function function, Symbol symbol) {
-    final Number number = (Number) symbol;
+    final Operand number = (Operand) symbol;
     double result = 0;
     switch (function.getType()) {
       case SIN:

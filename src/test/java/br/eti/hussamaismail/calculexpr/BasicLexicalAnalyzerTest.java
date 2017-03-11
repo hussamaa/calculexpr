@@ -16,6 +16,7 @@ import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
 import br.eti.hussamaismail.calculexpr.domain.enums.FunctionType;
 import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
+import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 
@@ -36,7 +37,7 @@ public class BasicLexicalAnalyzerTest {
   @Test
   public void testGetTokens1() {
     final String expression = "2+3";
-    final List<String> tokens = lexicalAnalyzer.getTokens(expression);   
+    final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     checkTokensOfTwoOperandOperations(tokens, 2, "+", 3);
   }
 
@@ -60,26 +61,26 @@ public class BasicLexicalAnalyzerTest {
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     checkTokensOfTwoOperandOperations(tokens, 2, "/", 3);
   }
-  
+
   @Test
   public void testGetTokens5() {
     final String expression = "1-1";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
-    checkTokensOfTwoOperandOperations(tokens, 1, "-",1);
+    checkTokensOfTwoOperandOperations(tokens, 1, "-", 1);
   }
-  
+
   @Test
   public void testGetTokens7() {
     final String expression = "1--1";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
-    checkTokensOfTwoOperandOperations(tokens, 1, "-",-1);
+    checkTokensOfTwoOperandOperations(tokens, 1, "-", -1);
   }
-  
+
   @Test
   public void testGetTokens8() {
     final String expression = "10-0";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
-    checkTokensOfTwoOperandOperations(tokens, 10, "-",0);
+    checkTokensOfTwoOperandOperations(tokens, 10, "-", 0);
   }
 
   @Test
@@ -151,7 +152,7 @@ public class BasicLexicalAnalyzerTest {
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     checkSymbolsOfFunctionCalls(symbols, FunctionType.LOG, 4);
   }
-  
+
   @Test
   public void testGetSymbols8() {
     final String expression = "sin(1)";
@@ -193,6 +194,12 @@ public class BasicLexicalAnalyzerTest {
     assertTrue(symbols.get(13) instanceof Bracket);
     assertEquals(BracketType.PARENTHESES_END, ((Bracket) symbols.get(13)).getType());
   }
+  
+  @Test(expected=InvalidExpressionException.class)
+  public void testGetSymbols10() {
+    final String expression = "#@";
+    lexicalAnalyzer.getSymbols(expression);    
+  }
 
   private void checkTokensOfTwoOperandOperations(final List<String> tokens, final double lhs,
       final String operation, final double rhs) {
@@ -201,7 +208,7 @@ public class BasicLexicalAnalyzerTest {
     assertEquals(operation, tokens.get(1));
     assertEquals(String.valueOf(rhs), tokens.get(2));
   }
-  
+
   private void checkSymbolsOfTwoOperandOperations(final List<Symbol> symbols, final double lhs,
       final OperatorType operatorType, final double rhs) {
     assertEquals(symbols.size(), 3);
@@ -212,8 +219,9 @@ public class BasicLexicalAnalyzerTest {
     assertTrue(symbols.get(2) instanceof Number);
     assertEquals(3.0, ((Number) symbols.get(2)).getValue(), 0.1);
   }
-  
-  private void checkSymbolsOfFunctionCalls(final List<Symbol> symbols, final FunctionType functionType, final double param) {
+
+  private void checkSymbolsOfFunctionCalls(final List<Symbol> symbols,
+      final FunctionType functionType, final double param) {
     assertEquals(symbols.size(), 4);
     assertTrue(symbols.get(0) instanceof Function);
     assertEquals(functionType, ((Function) symbols.get(0)).getType());

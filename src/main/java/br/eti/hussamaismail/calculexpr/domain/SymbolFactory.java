@@ -3,6 +3,7 @@ package br.eti.hussamaismail.calculexpr.domain;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
 import br.eti.hussamaismail.calculexpr.domain.enums.FunctionType;
 import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
+import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 
 /**
  * Factory responsible for creating symbols based on a token value.
@@ -85,6 +86,8 @@ public class SymbolFactory {
       symbol = new Bracket(BracketType.PARENTHESES_END);
     } else if (token.matches(REGEXP_IDENTIFIER)) {
       symbol = new Identifier(token);
+    } else {
+      throw new InvalidExpressionException();
     }
 
     return symbol;

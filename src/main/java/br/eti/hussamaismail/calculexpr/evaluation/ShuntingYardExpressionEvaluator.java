@@ -12,6 +12,7 @@ import br.eti.hussamaismail.calculexpr.domain.Number;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
+import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 
@@ -85,6 +86,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    */
   private List<Symbol> sortSymbolsInReversePolishNotation(final List<Symbol> symbols) {
     final List<Symbol> sortedSymbols = new LinkedList<>();
+
     for (final Symbol symbol : symbols) {
       if (symbol instanceof Number) {
         sortedSymbols.add(symbol);
@@ -109,13 +111,22 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
           while ((operatorStack.size() > 0) && !isSymbolTopStackALeftBracket()) {
             sortedSymbols.add(operatorStack.pop());
           }
-          operatorStack.pop();
+          if (operatorStack.size() > 0) {
+            operatorStack.pop();
+          } else {
+            throwsInvalidExpressionException();
+          }
         }
       }
     }
 
     while (!operatorStack.isEmpty()) {
-      sortedSymbols.add(operatorStack.pop());
+      final Symbol remainedSymbol = operatorStack.pop();
+      if (remainedSymbol instanceof Bracket) {
+        throwsInvalidExpressionException();
+      } else {
+        sortedSymbols.add(remainedSymbol);
+      }
     }
 
     return sortedSymbols;
@@ -159,6 +170,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
       if (symbol instanceof Number) {
         operatorStack.push(symbol);
       } else if (symbol instanceof Operator) {
+        checkArithmeticOperationRequirements();
         double result = performArithmeticOperation((Operator) symbol);
         operatorStack.push(new Number(result));
       }
@@ -184,4 +196,19 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     bindings.keySet().removeAll(Arrays.asList(names));
   }
 
+  /**
+   * Check if it is possible to perform an operation.
+   */
+  private void checkArithmeticOperationRequirements() {
+    if (operatorStack.size() < 2) {
+      throwsInvalidExpressionException();
+    }
+  }
+
+  /**
+   * Throws an invalid expression exception.;
+   */
+  private void throwsInvalidExpressionException() {
+    throw new InvalidExpressionException();
+  }
 }

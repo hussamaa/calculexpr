@@ -24,4 +24,9 @@ public class Bracket implements Symbol {
     this.type = type;
   }
 
+  @Override
+  public String toString() {
+    return "Bracket [type=" + type + "]";
+  }
+ 
 }

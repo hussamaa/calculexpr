@@ -14,7 +14,8 @@ import br.eti.hussamaismail.calculexpr.evaluation.ShuntingYardExpressionEvaluato
  */
 public final class Application {
 
-  private static final ExpressionEvaluator evaluator = ShuntingYardExpressionEvaluator.getInstance();
+  private static final ExpressionEvaluator evaluator =
+      ShuntingYardExpressionEvaluator.getInstance();
 
   public static void main(final String[] args) {
 

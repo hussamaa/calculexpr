@@ -5,7 +5,7 @@ package br.eti.hussamaismail.calculexpr.domain;
  * 
  * @author Hussama Ismail
  */
-public class Identifier implements Symbol {
+public class Identifier extends Operand implements Symbol {
 
   private String name;
 
@@ -20,6 +20,11 @@ public class Identifier implements Symbol {
 
   public void setName(final String name) {
     this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    return "Identifier [name=" + name + ", value=" + getValue() + "]";
   }
 
 }

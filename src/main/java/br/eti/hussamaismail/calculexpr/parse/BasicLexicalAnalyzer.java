@@ -50,8 +50,8 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
           case StreamTokenizer.TT_WORD:
             tokens.add(tokenizer.sval);
             break;
-          case StreamTokenizer.TT_NUMBER:
-            tokens.add(String.valueOf(tokenizer.nval));
+          case StreamTokenizer.TT_NUMBER:;
+            addNewNumberIntoTokensList((LinkedList<String>) tokens, tokenizer.nval);
             break;
           default:
             tokens.add(String.valueOf((char) tokenizer.ttype));
@@ -74,6 +74,28 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
       symbols.add(symbol);
     }
     return symbols;
+  }
+
+  /**
+   * Method that adjusts the token list when a negative number is informed after a positive number.
+   * 
+   * For instance the expression '1-1' has produce the tokens '1','-', '1'.
+   * 
+   * @param tokens
+   * @param currentNumber
+   */
+  private void addNewNumberIntoTokensList(final LinkedList<String> tokens,
+      final double currentNumber) {
+    final boolean isLastTokenNumber =
+        tokens.isEmpty() ? false : tokens.getLast().matches(SymbolFactory.REGEXP_NUMBER);
+    final boolean isCurrentNumberNegative =
+        String.valueOf(currentNumber).matches(SymbolFactory.REGEXP_NEGATIVE_NUMBER);
+    if (!isLastTokenNumber || !isCurrentNumberNegative) {
+      tokens.add(String.valueOf(currentNumber));
+    } else {
+      tokens.add(String.valueOf("-"));
+      tokens.add(String.valueOf(-currentNumber));
+    }
   }
 
 }

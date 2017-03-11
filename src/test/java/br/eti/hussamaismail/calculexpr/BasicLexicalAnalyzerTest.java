@@ -35,35 +35,56 @@ public class BasicLexicalAnalyzerTest {
 
   @Test
   public void testGetTokens1() {
-    final String expression = "2 + 3";
+    final String expression = "2+3";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);   
     checkTokensOfTwoOperandOperations(tokens, 2, "+", 3);
   }
 
   @Test
   public void testGetTokens2() {
-    final String expression = "2 - 3";
+    final String expression = "2-3";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     checkTokensOfTwoOperandOperations(tokens, 2, "-", 3);
   }
 
   @Test
   public void testGetTokens3() {
-    final String expression = "2 * 3";
+    final String expression = "2*3";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     checkTokensOfTwoOperandOperations(tokens, 2, "*", 3);
   }
 
   @Test
   public void testGetTokens4() {
-    final String expression = "2 / 3";
+    final String expression = "2/3";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     checkTokensOfTwoOperandOperations(tokens, 2, "/", 3);
   }
-
+  
   @Test
   public void testGetTokens5() {
-    final String expression = "( 2 + ( 3 * 2 ) * sin ( 10 ))";
+    final String expression = "1-1";
+    final List<String> tokens = lexicalAnalyzer.getTokens(expression);
+    checkTokensOfTwoOperandOperations(tokens, 1, "-",1);
+  }
+  
+  @Test
+  public void testGetTokens7() {
+    final String expression = "1--1";
+    final List<String> tokens = lexicalAnalyzer.getTokens(expression);
+    checkTokensOfTwoOperandOperations(tokens, 1, "-",-1);
+  }
+  
+  @Test
+  public void testGetTokens8() {
+    final String expression = "10-0";
+    final List<String> tokens = lexicalAnalyzer.getTokens(expression);
+    checkTokensOfTwoOperandOperations(tokens, 10, "-",0);
+  }
+
+  @Test
+  public void testGetTokens9() {
+    final String expression = "(2+(3*2)*sin(10))";
     final List<String> tokens = lexicalAnalyzer.getTokens(expression);
     assertEquals(tokens.size(), 14);
     assertEquals("(", tokens.get(0));
@@ -84,28 +105,28 @@ public class BasicLexicalAnalyzerTest {
 
   @Test
   public void testGetSymbols1() {
-    final String expression = "2 + 3";
+    final String expression = "2+3";
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     checkSymbolsOfTwoOperandOperations(symbols, 2, OperatorType.ADDITION, 3);
   }
 
   @Test
   public void testGetSymbols2() {
-    final String expression = "2 - 3";
+    final String expression = "2-3";
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     checkSymbolsOfTwoOperandOperations(symbols, 2, OperatorType.SUBTRACTION, 3);
   }
 
   @Test
   public void testGetSymbols3() {
-    final String expression = "2 * 3";
+    final String expression = "2*3";
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     checkSymbolsOfTwoOperandOperations(symbols, 2, OperatorType.MULTIPLICATION, 3);
   }
 
   @Test
   public void testGetSymbols4() {
-    final String expression = "2 / 3";
+    final String expression = "2/3";
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     checkSymbolsOfTwoOperandOperations(symbols, 2, OperatorType.DIVISION, 3);
   }
@@ -140,7 +161,7 @@ public class BasicLexicalAnalyzerTest {
 
   @Test
   public void testGetSymbols9() {
-    final String expression = "( 2 + ( 3 * 2 ) * sin ( 10 ))";
+    final String expression = "(2+(3*2)*sin(10))";
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     assertEquals(symbols.size(), 14);
     assertTrue(symbols.get(0) instanceof Bracket);

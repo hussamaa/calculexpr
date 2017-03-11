@@ -13,19 +13,20 @@ public class SymbolFactory {
 
   private static SymbolFactory instance;
 
-  private static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]+";
-  private static final String REGEXP_IDENTIFIER = "[a-zA-Z][a-zA-Z0-9]*";
-  private static final String REGEXP_OPERATOR_ADDITION = "\\+";
-  private static final String REGEXP_OPERATOR_SUBTRACTION = "-";
-  private static final String REGEXP_OPERATOR_MULTIPLICATION = "\\*";
-  private static final String REGEXP_OPERATOR_DIVISION = "/";
-  private static final String REGEXP_FUNCTION_SIN = "sin";
-  private static final String REGEXP_FUNCTION_COS = "cos";
-  private static final String REGEXP_FUNCTION_LOG = "log";
-  private static final String REGEXP_FUNCTION_SQRT = "sqrt";
-  private static final String REGEXP_ASSIGNMENT = "=";
-  private static final String REGEXP_PARENTHESES_START = "\\(";
-  private static final String REGEXP_PARENTHESES_END = "\\)";
+  public static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]+";
+  public static final String REGEXP_NEGATIVE_NUMBER = "-[0-9]+.?[0-9]+";
+  public static final String REGEXP_IDENTIFIER = "[a-zA-Z][a-zA-Z0-9]*";
+  public static final String REGEXP_OPERATOR_ADDITION = "\\+";
+  public static final String REGEXP_OPERATOR_SUBTRACTION = "-";
+  public static final String REGEXP_OPERATOR_MULTIPLICATION = "\\*";
+  public static final String REGEXP_OPERATOR_DIVISION = "/";
+  public static final String REGEXP_FUNCTION_SIN = "sin";
+  public static final String REGEXP_FUNCTION_COS = "cos";
+  public static final String REGEXP_FUNCTION_LOG = "log";
+  public static final String REGEXP_FUNCTION_SQRT = "sqrt";
+  public static final String REGEXP_ASSIGNMENT = "=";
+  public static final String REGEXP_PARENTHESES_START = "\\(";
+  public static final String REGEXP_PARENTHESES_END = "\\)";
 
   private SymbolFactory() {}
 

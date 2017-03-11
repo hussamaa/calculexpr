@@ -2,12 +2,14 @@ package br.eti.hussamaismail.calculexpr.evaluation;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import br.eti.hussamaismail.calculexpr.domain.Bracket;
+import br.eti.hussamaismail.calculexpr.domain.Function;
 import br.eti.hussamaismail.calculexpr.domain.Number;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
@@ -19,6 +21,9 @@ import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 /**
  * This class implements the expression evaluator used in this project. In particular, it is uses an
  * algorithm called Shunting Yard, which uses the Reverse Polish Notation.
+ * 
+ * An explanation and the pseudo-code can be found at
+ * <a href="https://en.wikipedia.org/wiki/Shunting-yard_algorithm">Wikipedia</a>
  * 
  * @author Hussama Ismail
  */
@@ -49,15 +54,45 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     return instance;
   }
 
-  /**
-   * Check if symbol on the top of the stack is a left bracket.
-   * 
-   * @return
-   */
-  private boolean isSymbolTopStackALeftBracket() {
-    final Symbol topStack = operatorStack.peek();
-    return (topStack instanceof Bracket)
-        && ((Bracket) topStack).getType().equals(BracketType.PARENTHESES_START);
+  /** {@inheritDoc} */
+  public double eval(final String expression) {
+    operatorStack.clear();
+    final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
+    final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
+    final Iterator<Symbol> symbolsIterator = sortedSymbols.iterator();
+    while (symbolsIterator.hasNext()) {
+      final Symbol symbol = symbolsIterator.next();
+      if (symbol instanceof Number) {
+        operatorStack.push(symbol);
+      } else if (symbol instanceof Operator) {
+        checkArithmeticOperationRequirements();
+        double result = performArithmeticOperation((Operator) symbol);
+        operatorStack.push(new Number(result));
+      } else if (symbol instanceof Function) {
+        checkArithmeticFunctionRequirements(symbolsIterator);
+        double result = performArithmeticFunction((Function) symbol, symbolsIterator.next());
+        operatorStack.push(new Number(result));
+      }
+    }
+    return ((Number) operatorStack.pop()).getValue();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void showAllBindings() {
+    bindings.forEach((name, value) -> System.out.println(name + " = " + value));
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeAllBindings() {
+    bindings.clear();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeBindings(final String[] names) {
+    bindings.keySet().removeAll(Arrays.asList(names));
   }
 
   /**
@@ -89,6 +124,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
     for (final Symbol symbol : symbols) {
       if (symbol instanceof Number) {
+        sortedSymbols.add(symbol);
+      } else if (symbol instanceof Function) {
         sortedSymbols.add(symbol);
       } else if (symbol instanceof Operator) {
         if (operatorStack.isEmpty()) {
@@ -133,6 +170,17 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   }
 
   /**
+   * Check if symbol on the top of the stack is a left bracket.
+   * 
+   * @return
+   */
+  private boolean isSymbolTopStackALeftBracket() {
+    final Symbol topStack = operatorStack.peek();
+    return (topStack instanceof Bracket)
+        && ((Bracket) topStack).getType().equals(BracketType.PARENTHESES_START);
+  }
+
+  /**
    * Executes the correspondent arithmetic operation.
    * 
    * @param operator
@@ -161,39 +209,32 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     return result;
   }
 
-  /** {@inheritDoc} */
-  public double eval(final String expression) {
-    operatorStack.clear();
-    final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
-    final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
-    for (final Symbol symbol : sortedSymbols) {
-      if (symbol instanceof Number) {
-        operatorStack.push(symbol);
-      } else if (symbol instanceof Operator) {
-        checkArithmeticOperationRequirements();
-        double result = performArithmeticOperation((Operator) symbol);
-        operatorStack.push(new Number(result));
-      }
+  /**
+   * Executes the correspondent arithmetic function.
+   * 
+   * @param operator
+   * @return
+   */
+  private double performArithmeticFunction(final Function function, Symbol symbol) {
+    final Number number = (Number) symbol;
+    double result = 0;
+    switch (function.getType()) {
+      case SIN:
+        result = Math.sin(number.getValue());
+        break;
+      case COS:
+        result = Math.cos(number.getValue());
+        break;
+      case LOG:
+        result = Math.log10(number.getValue());
+        break;
+      case SQRT:
+        result = Math.sqrt(number.getValue());
+        break;
+      default:
+        break;
     }
-    return ((Number) operatorStack.pop()).getValue();
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public void showAllBindings() {
-    bindings.forEach((name, value) -> System.out.println(name + " = " + value));
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public void removeAllBindings() {
-    bindings.clear();
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public void removeBindings(final String[] names) {
-    bindings.keySet().removeAll(Arrays.asList(names));
+    return result;
   }
 
   /**
@@ -206,9 +247,19 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   }
 
   /**
+   * Check if it is possible to perform a function.
+   */
+  private void checkArithmeticFunctionRequirements(final Iterator<Symbol> iterator) {
+    if (!iterator.hasNext()) {
+      throwsInvalidExpressionException();
+    }
+  }
+
+  /**
    * Throws an invalid expression exception.;
    */
   private void throwsInvalidExpressionException() {
     throw new InvalidExpressionException();
   }
+
 }

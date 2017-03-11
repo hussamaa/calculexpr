@@ -7,7 +7,7 @@ package br.eti.hussamaismail.calculexpr.domain.enums;
  */
 public enum OperatorType {
 
-  ADDITION(0), SUBTRACTION(0), DIVISION(1), MULTIPLICATION(1), ASSIGNMENT(0), OTHER(0);
+  ADDITION(1), SUBTRACTION(1), DIVISION(2), MULTIPLICATION(2), ASSIGNMENT(0);
 
   private int precedenceLevel;
 

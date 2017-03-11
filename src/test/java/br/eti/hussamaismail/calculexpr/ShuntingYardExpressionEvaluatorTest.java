@@ -14,7 +14,7 @@ import br.eti.hussamaismail.calculexpr.evaluation.ShuntingYardExpressionEvaluato
  * 
  * @author Hussama Ismail
  */
-public class ArithmeticsTest {
+public class ShuntingYardExpressionEvaluatorTest {
 
   private String expression;
   private static ExpressionEvaluator evaluator;

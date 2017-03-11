@@ -60,8 +60,6 @@ public class SymbolFactory {
 
     if (token.matches(REGEXP_NUMBER)) {
       symbol = new Number(Double.valueOf(token));
-    } else if (token.matches(REGEXP_IDENTIFIER)) {
-      symbol = new Identifier(token);
     } else if (token.matches(REGEXP_OPERATOR_ADDITION)) {
       symbol = new Operator(OperatorType.ADDITION);
     } else if (token.matches(REGEXP_OPERATOR_SUBTRACTION)) {
@@ -84,6 +82,8 @@ public class SymbolFactory {
       symbol = new Bracket(BracketType.PARENTHESES_START);
     } else if (token.matches(REGEXP_PARENTHESES_END)) {
       symbol = new Bracket(BracketType.PARENTHESES_END);
+    } else if (token.matches(REGEXP_IDENTIFIER)) {
+      symbol = new Identifier(token);
     }
 
     return symbol;

@@ -152,6 +152,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   /** {@inheritDoc} */
   public double eval(final String expression) {
+    operatorStack.clear();
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
     for (final Symbol symbol : sortedSymbols) {

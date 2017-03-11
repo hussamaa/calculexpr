@@ -13,7 +13,7 @@ public class SymbolFactory {
 
   private static SymbolFactory instance;
 
-  private static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]";
+  private static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]+";
   private static final String REGEXP_IDENTIFIER = "[a-zA-Z][a-zA-Z0-9]*";
   private static final String REGEXP_OPERATOR_ADDITION = "\\+";
   private static final String REGEXP_OPERATOR_SUBTRACTION = "-";

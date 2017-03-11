@@ -75,13 +75,13 @@ public class ArithmeticsTest {
   @Test
   public void testMultiplication2() {
     expression = "3.3 * 3 * 30";
-    assertEquals(297, evaluator.eval(expression), 0);
+    assertEquals(297, evaluator.eval(expression), 0.1);
   }
 
   @Test
   public void testMultiplication3() {
     expression = "-3.3 * 3 * 30 * -1 * 10 * 0.5";
-    assertEquals(1485, evaluator.eval(expression), 0);
+    assertEquals(1485, evaluator.eval(expression), 0.1);
   }
 
   @Test
@@ -123,7 +123,7 @@ public class ArithmeticsTest {
   @Test
   public void testBrackets2() {
     expression = "3 * (2 + 3)";
-    assertEquals(18, evaluator.eval(expression), 0);
+    assertEquals(15, evaluator.eval(expression), 0);
   }
 
   @Test

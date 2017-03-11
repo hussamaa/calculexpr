@@ -11,7 +11,6 @@ import br.eti.hussamaismail.calculexpr.domain.Bracket;
 import br.eti.hussamaismail.calculexpr.domain.Number;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
-import br.eti.hussamaismail.calculexpr.domain.SymbolFactory;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
@@ -26,7 +25,6 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   private static ShuntingYardExpressionEvaluator instance;
 
-  private SymbolFactory symbolFactory;
   private LexicalAnalyzer lexicalAnalyzer;
   private Stack<Symbol> operatorStack;
 
@@ -35,7 +33,6 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   private ShuntingYardExpressionEvaluator() {
     this.bindings = new HashMap<>();
     this.operatorStack = new Stack<>();
-    this.symbolFactory = SymbolFactory.getInstance();
     this.lexicalAnalyzer = BasicLexicalAnalyzer.getInstance();
   }
 
@@ -52,22 +49,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   }
 
   /**
-   * Generate a list of Symbols based on a list of tokens.
-   * 
-   * @param tokens
-   * @return
-   */
-  private List<Symbol> generateListOfSymbols(final List<String> tokens) {
-    final List<Symbol> symbols = new LinkedList<>();
-    for (final String token : tokens) {
-      final Symbol symbol = symbolFactory.createSymbol(token);
-      symbols.add(symbol);
-    }
-    return symbols;
-  }
-
-  /**
-   * Check if the top of the stack is a left bracket.
+   * Check if symbol on the top of the stack is a left bracket.
    * 
    * @return
    */
@@ -81,7 +63,22 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * This method sort the symbols list in the reverse polish notation, which is required by Shunting
    * yard algorithm.
    * 
-   * For instance, '3', '+', '2' is rewrite as '3','2','+'.
+   * For instance, '3', '+', '2' is rewritten as '3','2','+'.
+   * 
+   * Basically, the method to rewrite in-fix into post-fix expressions, does:
+   * 
+   * 1) Check if the symbol is a number and if it is true, just includes it in the sorted list.
+   * 
+   * 2) If the symbol is an operator does: Check if the operator stack is empty and in this case,
+   * includes the symbol in the operator stack. Otherwise, compares the precedence of the current
+   * symbol and the elements inside the stack (starting from the top). The elements which contains
+   * greater or equal precedence should be moved to the sorted list.
+   * 
+   * 3) In case of brackets (parentheses start), this algorithm includes it into the operator stack.
+   * Otherwise (parentheses end), it moves the operators inside the stack into sorted list (until
+   * finding another parentheses start).
+   * 
+   * 4) Move the leftovers (symbols into the operator stack) into the sorted list.
    * 
    * @param symbols
    * @return
@@ -97,10 +94,10 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         } else {
           final Operator currentOperator = (Operator) symbol;
           Symbol topStack = operatorStack.peek();
-          while ((topStack instanceof Operator) && ((Operator) topStack).getType()
-              .getPrecedenceLevel() > currentOperator.getType().getPrecedenceLevel()) {
+          while (topStack != null && (topStack instanceof Operator) && ((Operator) topStack)
+              .getType().getPrecedenceLevel() >= currentOperator.getType().getPrecedenceLevel()) {
             sortedSymbols.add(operatorStack.pop());
-            topStack = operatorStack.peek();
+            topStack = operatorStack.size() > 0 ? operatorStack.peek() : null;
           }
           operatorStack.push(currentOperator);
         }
@@ -109,7 +106,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         if (bracket.getType() == BracketType.PARENTHESES_START) {
           operatorStack.push(bracket);
         } else {
-          while (!operatorStack.isEmpty() && !isSymbolTopStackALeftBracket()) {
+          while ((operatorStack.size() > 0) && !isSymbolTopStackALeftBracket()) {
             sortedSymbols.add(operatorStack.pop());
           }
           operatorStack.pop();
@@ -155,10 +152,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   /** {@inheritDoc} */
   public double eval(final String expression) {
-    final List<String> tokens = lexicalAnalyzer.getTokens(expression);
-    final List<Symbol> symbols = generateListOfSymbols(tokens);
+    final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
-
     for (final Symbol symbol : sortedSymbols) {
       if (symbol instanceof Number) {
         operatorStack.push(symbol);

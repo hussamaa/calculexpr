@@ -6,6 +6,9 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import br.eti.hussamaismail.calculexpr.domain.Symbol;
+import br.eti.hussamaismail.calculexpr.domain.SymbolFactory;
+
 /**
  * This class contains a simple implementation of a lexical analyzer used by the
  * ExpressionEvaluator.
@@ -15,13 +18,17 @@ import java.util.List;
 public class BasicLexicalAnalyzer implements LexicalAnalyzer {
 
   private static BasicLexicalAnalyzer instance;
-
-  private BasicLexicalAnalyzer() {}
+  private SymbolFactory symbolFactory;
 
   private static final char DIVISION_SYMBOL = '/';
 
+  private BasicLexicalAnalyzer() {
+    this.symbolFactory = SymbolFactory.getInstance();
+  }
+
   /**
    * Returns a singleton of BasicLexicalAnalyzer.
+   * 
    * @return
    */
   public static BasicLexicalAnalyzer getInstance() {
@@ -31,7 +38,7 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
     return instance;
   }
 
-  /** {@inheritDoc}} */
+  /** {@inheritDoc} */
   public List<String> getTokens(final String expression) {
     final List<String> tokens = new LinkedList<>();
     final StringReader stringReader = new StringReader(expression);
@@ -56,6 +63,17 @@ public class BasicLexicalAnalyzer implements LexicalAnalyzer {
       stringReader.close();
     }
     return tokens;
+  }
+
+  /** {@inheritDoc} */
+  public List<Symbol> getSymbols(final String expression) {
+    final List<String> tokens = getTokens(expression);
+    final List<Symbol> symbols = new LinkedList<>();
+    for (final String token : tokens) {
+      final Symbol symbol = symbolFactory.createSymbol(token);
+      symbols.add(symbol);
+    }
+    return symbols;
   }
 
 }

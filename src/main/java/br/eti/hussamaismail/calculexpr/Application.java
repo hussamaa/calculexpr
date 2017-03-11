@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluator;
-import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
+import br.eti.hussamaismail.calculexpr.evaluation.ShuntingYardExpressionEvaluator;
 
 /**
  * Main class for calculexpr project.
@@ -14,7 +14,7 @@ import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
  */
 public final class Application {
 
-  private static final ExpressionEvaluator evaluator = ExpressionEvaluatorImpl.getInstance();
+  private static final ExpressionEvaluator evaluator = ShuntingYardExpressionEvaluator.getInstance();
 
   public static void main(final String[] args) {
 

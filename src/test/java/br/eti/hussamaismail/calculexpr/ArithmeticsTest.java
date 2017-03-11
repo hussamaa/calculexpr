@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluator;
-import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluatorImpl;
+import br.eti.hussamaismail.calculexpr.evaluation.ShuntingYardExpressionEvaluator;
 
 /**
  * This class describe the unit tests responsible for evaluating the basic arithmetics expressions
@@ -21,7 +21,7 @@ public class ArithmeticsTest {
 
   @BeforeClass
   public static void prepare() {
-    evaluator = ExpressionEvaluatorImpl.getInstance();
+    evaluator = ShuntingYardExpressionEvaluator.getInstance();
   }
 
   @Test

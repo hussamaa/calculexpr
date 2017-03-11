@@ -3,8 +3,6 @@ package br.eti.hussamaismail.calculexpr.parse;
 import java.io.IOException;
 import java.util.List;
 
-import br.eti.hussamaismail.calculexpr.domain.Token;
-
 /**
  * This interface represents a lexical analyzer. In particular, this component is responsible for
  * parsing an expression and retrieving a set of tokens.
@@ -20,6 +18,6 @@ public interface LexicalAnalyzer {
    * @return
    * @throws IOException
    */
-  List<Token> getTokens(final String expression);
-
+  List<String> getTokens(final String expression);
+  
 }

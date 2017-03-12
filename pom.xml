@@ -3,7 +3,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.eti.hussamaismail</groupId>
   <artifactId>calculexpr</artifactId>
-  <version>0.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -12,4 +11,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <version>1.0</version>
 </project>

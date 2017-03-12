@@ -30,5 +30,5 @@ public class Operand implements Symbol {
   public String toString() {
     return "Operand [value=" + value + "]";
   }
-  
+
 }

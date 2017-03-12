@@ -8,10 +8,15 @@ package br.eti.hussamaismail.calculexpr.domain;
 public class Identifier extends Operand implements Symbol {
 
   private String name;
+  private boolean assigned;
 
   public Identifier(final String name) {
     super();
     this.name = name;
+  }
+
+  public Identifier() {
+    super();
   }
 
   public String getName() {
@@ -20,6 +25,14 @@ public class Identifier extends Operand implements Symbol {
 
   public void setName(final String name) {
     this.name = name;
+  }
+
+  public boolean isAssigned() {
+    return assigned;
+  }
+
+  public void setAssigned(final boolean assigned) {
+    this.assigned = assigned;
   }
 
   @Override

@@ -2,7 +2,6 @@ package br.eti.hussamaismail.calculexpr.evaluation;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +9,12 @@ import java.util.Stack;
 
 import br.eti.hussamaismail.calculexpr.domain.Bracket;
 import br.eti.hussamaismail.calculexpr.domain.Function;
+import br.eti.hussamaismail.calculexpr.domain.Identifier;
 import br.eti.hussamaismail.calculexpr.domain.Operand;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
+import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
 import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
@@ -30,12 +31,12 @@ import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   private static ShuntingYardExpressionEvaluator instance;
-  private static final String ANSWER_SYMBOL = "_";
-
-  private LexicalAnalyzer lexicalAnalyzer;
-  private Stack<Symbol> operatorStack;
+  private static final String DEFAULT_ANSWER_SYMBOL = "_";
 
   private Map<String, Double> bindings;
+  private LexicalAnalyzer lexicalAnalyzer;
+  private Stack<Symbol> operatorStack;
+  private Identifier resultBinding;
 
   private ShuntingYardExpressionEvaluator() {
     this.bindings = new HashMap<>();
@@ -57,27 +58,22 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   /** {@inheritDoc} */
   public double eval(final String expression) {
-    operatorStack.clear();
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
     final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
-    final Iterator<Symbol> symbolsIterator = sortedSymbols.iterator();
-    while (symbolsIterator.hasNext()) {
-      final Symbol symbol = symbolsIterator.next();
+    prepareEvaluationData(sortedSymbols);
+    for (int index = 0; index < sortedSymbols.size(); index++) {
+      final Symbol symbol = sortedSymbols.get(index);
       if (symbol instanceof Operand) {
         operatorStack.push(symbol);
       } else if (symbol instanceof Operator) {
-        checkArithmeticOperationRequirements();
-        double result = performArithmeticOperation((Operator) symbol);
-        operatorStack.push(new Operand(result));
+        performOperator(symbol);
       } else if (symbol instanceof Function) {
-        checkArithmeticFunctionRequirements(symbolsIterator);
-        double result = performArithmeticFunction((Function) symbol, symbolsIterator.next());
-        operatorStack.push(new Operand(result));
+        final Function function = (Function) symbol;
+        final Operand operand = (Operand) sortedSymbols.get(++index);
+        performArithmeticFunction(function, operand);
       }
     }
-    double answer = ((Operand) operatorStack.pop()).getValue();
-    bindings.put(ANSWER_SYMBOL, answer);
-    return answer;
+    return getResultEvaluation();
   }
 
   /** {@inheritDoc} */
@@ -123,7 +119,9 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * @return
    */
   private List<Symbol> sortSymbolsInReversePolishNotation(final List<Symbol> symbols) {
+
     final List<Symbol> sortedSymbols = new LinkedList<>();
+    operatorStack.clear();
 
     for (final Symbol symbol : symbols) {
       if (symbol instanceof Operand) {
@@ -184,6 +182,41 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   }
 
   /**
+   * This method returns the result of the expression evaluation, which is represented by the last
+   * element inside the operator stack. In particular, it also check if the result was previously
+   * set (via an assignment operation). In this case, it is not necessary to set the result anymore.
+   * 
+   * @return
+   */
+  private double getResultEvaluation() {
+    if (!resultBinding.isAssigned()) {
+      final Operand result = (Operand) operatorStack.pop();
+      resultBinding.setName(DEFAULT_ANSWER_SYMBOL);
+      resultBinding.setValue(result.getValue());
+    }
+    bindings.put(resultBinding.getName(), resultBinding.getValue());
+    return resultBinding.getValue();
+  }
+
+  /**
+   * Method that validates restrictions and performs the operator action.
+   * 
+   * @param symbol
+   */
+  private void performOperator(final Symbol symbol) {
+    final Operator operator = (Operator) symbol;
+    if (operator.getType().equals(OperatorType.ASSIGNMENT)) {
+      checkThereIsOneSymbolIntoTheStack();
+      resultBinding.setValue(((Operand) operatorStack.peek()).getValue());
+      resultBinding.setAssigned(true);
+    } else {
+      checkThereAreTwoSymbolsIntoTheStack();
+      double result = performArithmeticOperation(operator);
+      operatorStack.push(new Operand(result));
+    }
+  }
+
+  /**
    * Executes the correspondent arithmetic operation.
    * 
    * @param operator
@@ -207,6 +240,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         result = leftHandSide.getValue() - rightHandSide.getValue();
         break;
       default:
+        throwsInvalidExpressionException();
         break;
     }
     return result;
@@ -215,45 +249,67 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   /**
    * Executes the correspondent arithmetic function.
    * 
-   * @param operator
+   * @param function
+   * @param operand
    * @return
    */
-  private double performArithmeticFunction(final Function function, Symbol symbol) {
-    final Operand number = (Operand) symbol;
+  private void performArithmeticFunction(final Function function, final Operand operand) {
     double result = 0;
     switch (function.getType()) {
       case SIN:
-        result = Math.sin(number.getValue());
+        result = Math.sin(operand.getValue());
         break;
       case COS:
-        result = Math.cos(number.getValue());
+        result = Math.cos(operand.getValue());
         break;
       case LOG:
-        result = Math.log10(number.getValue());
+        result = Math.log10(operand.getValue());
         break;
       case SQRT:
-        result = Math.sqrt(number.getValue());
+        result = Math.sqrt(operand.getValue());
         break;
       default:
+        throwsInvalidExpressionException();
         break;
     }
-    return result;
+    operatorStack.push(new Operand(result));
   }
 
   /**
-   * Check if it is possible to perform an operation.
+   * This method is responsible for cleaning variables and objects used during the evaluation
+   * process. In addition, it loads all binding values for its respective identifier.
    */
-  private void checkArithmeticOperationRequirements() {
-    if (operatorStack.size() < 2) {
+  private void prepareEvaluationData(final List<Symbol> symbols) {
+    operatorStack.clear();
+    resultBinding = new Identifier(DEFAULT_ANSWER_SYMBOL);
+    for (int idx = 0; idx < symbols.size(); idx++) {
+      final Symbol symbol = symbols.get(idx);
+      final Identifier identifier = (symbol instanceof Identifier) ? (Identifier) symbol : null;
+      if (identifier != null) {
+        final Double identifierValue = bindings.get(identifier.getName());
+        if (identifierValue == null) {
+          throwsInvalidExpressionException();
+        } else {
+          identifier.setValue(identifierValue);
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if there is one element inside the stack.
+   */
+  private void checkThereIsOneSymbolIntoTheStack() {
+    if (operatorStack.size() == 1) {
       throwsInvalidExpressionException();
     }
   }
 
   /**
-   * Check if it is possible to perform a function.
+   * Check if there are two symbols inside the stack.
    */
-  private void checkArithmeticFunctionRequirements(final Iterator<Symbol> iterator) {
-    if (!iterator.hasNext()) {
+  private void checkThereAreTwoSymbolsIntoTheStack() {
+    if (operatorStack.size() < 2) {
       throwsInvalidExpressionException();
     }
   }

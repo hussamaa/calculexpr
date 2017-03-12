@@ -2,6 +2,7 @@ package br.eti.hussamaismail.calculexpr.evaluation;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import br.eti.hussamaismail.calculexpr.domain.Operand;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
+import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
 import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
@@ -58,8 +60,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   /** {@inheritDoc} */
   public double eval(final String expression) {
     final List<Symbol> symbols = lexicalAnalyzer.getSymbols(expression);
+    prepareEvaluationData(symbols);
     final List<Symbol> sortedSymbols = sortSymbolsInReversePolishNotation(symbols);
-    prepareEvaluationData(sortedSymbols);
     for (int index = 0; index < sortedSymbols.size(); index++) {
       final Symbol symbol = sortedSymbols.get(index);
       if (symbol instanceof Operand) {
@@ -297,20 +299,51 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
 
   /**
    * This method is responsible for cleaning variables and objects used during the evaluation
-   * process. In addition, it loads all binding values for its respective identifier.
+   * process. In addition, it loads all binding values for its respective identifier and checks for
+   * assignments.
    */
   private void prepareEvaluationData(final List<Symbol> symbols) {
     operatorStack.clear();
     resultBinding = new Identifier(DEFAULT_ANSWER_SYMBOL);
-    for (int idx = 0; idx < symbols.size(); idx++) {
-      final Symbol symbol = symbols.get(idx);
+    loadAllBindingValues(symbols);
+    checkThereIsAnAssignment(symbols);
+  }
+
+  /**
+   * Method which loads the binding values into its identifiers.
+   * 
+   * @param symbols
+   */
+  private void loadAllBindingValues(final List<Symbol> symbols) {
+    final Iterator<Symbol> iterator = symbols.iterator();
+    while (iterator.hasNext()) {
+      final Symbol symbol = iterator.next();
       final Identifier identifier = (symbol instanceof Identifier) ? (Identifier) symbol : null;
       if (identifier != null) {
         final Double identifierValue = bindings.get(identifier.getName());
-        if (identifierValue == null) {
-          throwsInvalidExpressionException();
-        } else {
+        if (identifierValue != null) {
           identifier.setValue(identifierValue);
+          identifier.setAssigned(true);
+        }
+      }
+    }
+  }
+
+  /**
+   * This method checks is there is an assignment and stores the name of the desired identifier.
+   * 
+   * @param symbols
+   */
+  private void checkThereIsAnAssignment(final List<Symbol> symbols) {
+    if (symbols.size() > 2) {
+      final Symbol firstSymbol = symbols.get(0);
+      final Symbol secondSymbol = symbols.get(1);
+      if ((firstSymbol instanceof Identifier) && (secondSymbol instanceof Operator)) {
+        final Identifier identifier = ((Identifier) firstSymbol);
+        final Operator operator = ((Operator) secondSymbol);
+        if (OperatorType.ASSIGNMENT.equals(operator.getType())) {
+          resultBinding.setName(identifier.getName());
+          symbols.remove(0);
         }
       }
     }

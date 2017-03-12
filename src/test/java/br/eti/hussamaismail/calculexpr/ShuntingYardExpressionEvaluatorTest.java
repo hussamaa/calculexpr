@@ -247,4 +247,15 @@ public class ShuntingYardExpressionEvaluatorTest {
     assertEquals(5.0, evaluator.eval(expression), 0.1);
   }
 
+  @Test
+  public void testMultipleAssignments1() {
+    evaluator.removeAllBindings();
+    expression = "a = 3 + 2 + 4 + 5";
+    assertEquals(14, evaluator.eval(expression), 0.1);
+    expression = "b = (3 * 5)";
+    assertEquals(15, evaluator.eval(expression), 0.1);
+    expression = "a + b * 2";
+    assertEquals(44, evaluator.eval(expression), 0.1);
+  }
+
 }

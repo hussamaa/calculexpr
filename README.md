@@ -1,8 +1,8 @@
-# CalculExpr (Calculette des Expressions)
+# CalculExpr (Calculette des Expressions) ![build status](https://api.travis-ci.org/hussamaa/calculexpr.svg?branch=master)
 
-CalculExpr is tool for solving mathematical expressions written in **Java**. In particular, CalculExpr employs *Shunting Yard algorithm* to solve the mathematical expressions using the **Reverse Polish Notation**. This tool supports expressions involving numbers, identifiers, basic operands (*e.g.*, **+**, **-**, \*, **/**), and functions (*e.g.,* **sin**, **cos**, **log**, and **sqrt**).
+CalculExpr is tool for solving mathematical expressions written in **Java**. In particular, CalculExpr employs **Shunting Yard algorithm** and **Reverse Polish Notation** to solve the mathematical expressions. This tool supports expressions involving numbers, identifiers, basic operators (*e.g.*, **+**, **-**, \*, **/**), and functions (*e.g.,* **sin**, **cos**, **log**, and **sqrt**).
 
-An explanation of the Reverse Polish Notation, Shunting Yard algorithm and its pseudocode can be found at [Wikipedia](https://en.wikipedia.org/wiki/Shunting-yard_algorithm).
+An explanation about the Reverse Polish Notation, Shunting Yard algorithm and its pseudocode can be found at [Wikipedia](https://en.wikipedia.org/wiki/Shunting-yard_algorithm).
 
 ## Grammar
 
@@ -46,6 +46,6 @@ Please type your expressions:
 
 * This project uses the Google Java Style Guide. For more information, please visit the website [https://google.github.io/styleguide/javaguide.html](https://google.github.io/styleguide/javaguide.html)
 
-* The functions call support only numbers or identifier as parameter.
+* The functions call support only one number or identifier as parameter.
 
 * The basic lexical analyzer and the Shunting Yard algorithm are not able to detect all syntax problems and sometimes it does not return the exact root cause for the invalid expression.

@@ -22,7 +22,7 @@ function   ::= ('sqrt' | 'log' | 'sin' | 'cos') '(' expr ')'                    
 ## Execution and Usage
 
 To use CalculExpr, it is necessary to have at least Java Runtime Environment
-Version 8.0 (jre1.8), and the executable can be found at: [v1.0]()
+Version 8.0 (jre1.8), and the executable can be found at: [v1.0](https://github.com/hussamaa/calculexpr/releases/download/v1.0/calculexpr-v1.0.jar)
 
 > java -jar calculexpr-v1.0.jar
 

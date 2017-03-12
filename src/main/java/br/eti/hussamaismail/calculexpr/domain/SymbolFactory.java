@@ -16,7 +16,7 @@ public class SymbolFactory {
 
   public static final String REGEXP_NUMBER = "-?[0-9]+.?[0-9]+";
   public static final String REGEXP_NEGATIVE_NUMBER = "-[0-9]+.?[0-9]+";
-  public static final String REGEXP_IDENTIFIER = "[a-zA-Z][a-zA-Z0-9]*";
+  public static final String REGEXP_IDENTIFIER = "[a-zA-Z][a-zA-Z0-9]*|_";
   public static final String REGEXP_OPERATOR_ADDITION = "\\+";
   public static final String REGEXP_OPERATOR_SUBTRACTION = "-";
   public static final String REGEXP_OPERATOR_MULTIPLICATION = "\\*";

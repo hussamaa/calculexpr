@@ -23,7 +23,11 @@ public final class Application {
     System.out.println("* Calculatrice d'expression            v0.1 *");
     System.out.println("* Hussama Ismail - hussama.ismail@gmail.com *");
     System.out.println("*********************************************");
-    System.out.println("\nPlease type yours expressions:");
+    System.out.println("\nCommands available:");
+    System.out.println(" :vars            - shows all temporary variables");
+    System.out.println(" :clear <varname> - erases temporary variables");
+    System.out.println(" :quit (or :exit) - finishes the calculator");
+    System.out.println("\nPlease type your expressions:");
 
     try {
       final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

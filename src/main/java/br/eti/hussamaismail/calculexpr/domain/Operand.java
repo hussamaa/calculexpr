@@ -1,7 +1,7 @@
 package br.eti.hussamaismail.calculexpr.domain;
 
 /**
- * This class represents the numbers.
+ * This class represents the terms.
  * 
  * @author Hussama Ismail
  */

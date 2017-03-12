@@ -17,6 +17,7 @@ import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
 import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
 import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
+import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionMessages;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
 
@@ -153,7 +154,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
           if (operatorStack.size() > 0) {
             operatorStack.pop();
           } else {
-            throwsInvalidExpressionException();
+            throw new InvalidExpressionException(InvalidExpressionMessages.MISMATCHED_PARENTHESES);
           }
         }
       }
@@ -162,7 +163,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
     while (!operatorStack.isEmpty()) {
       final Symbol remainedSymbol = operatorStack.pop();
       if (remainedSymbol instanceof Bracket) {
-        throwsInvalidExpressionException();
+        throw new InvalidExpressionException(InvalidExpressionMessages.MISMATCHED_PARENTHESES);
       } else {
         sortedSymbols.add(remainedSymbol);
       }
@@ -190,7 +191,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * @return
    */
   private double getResultEvaluation() {
-    if (!resultBinding.isAssigned()) {
+    if (!resultBinding.isAssigned() && !operatorStack.isEmpty()) {
       final Operand result = (Operand) operatorStack.pop();
       resultBinding.setName(DEFAULT_ANSWER_SYMBOL);
       resultBinding.setValue(result.getValue());
@@ -220,7 +221,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    */
   private void performArithmeticOperationOneOperand(final Operator operator) {
     double result = 0;
-    final Operand operand = (Operand) operatorStack.peek();
+    final Operand operand = (Operand) operatorStack.pop();
     switch (operator.getType()) {
       case ADDITION:
         result = (operand.getValue());
@@ -233,7 +234,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         resultBinding.setAssigned(true);
         break;
       default:
-        throwsInvalidExpressionException();
+        throw new InvalidExpressionException(InvalidExpressionMessages.OPERATOR_NOT_FOUND);
     }
     operatorStack.push(new Operand(result));
   }
@@ -262,8 +263,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         result = leftHandSide.getValue() / rightHandSide.getValue();
         break;
       default:
-        throwsInvalidExpressionException();
-        break;
+        throw new InvalidExpressionException(InvalidExpressionMessages.OPERATOR_NOT_FOUND);
     }
     operatorStack.push(new Operand(result));
   }
@@ -291,8 +291,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         result = Math.sqrt(operand.getValue());
         break;
       default:
-        throwsInvalidExpressionException();
-        break;
+        throw new InvalidExpressionException(InvalidExpressionMessages.FUNCTION_NOT_FOUND);
     }
     operatorStack.push(new Operand(result));
   }
@@ -305,8 +304,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
   private void prepareEvaluationData(final List<Symbol> symbols) {
     operatorStack.clear();
     resultBinding = new Identifier(DEFAULT_ANSWER_SYMBOL);
-    loadAllBindingValues(symbols);
     checkThereIsAnAssignment(symbols);
+    loadAllBindingValues(symbols);
   }
 
   /**
@@ -324,6 +323,8 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         if (identifierValue != null) {
           identifier.setValue(identifierValue);
           identifier.setAssigned(true);
+        } else {
+          throw new InvalidExpressionException(identifier);
         }
       }
     }
@@ -347,13 +348,6 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
         }
       }
     }
-  }
-
-  /**
-   * Throws an invalid expression exception.;
-   */
-  private void throwsInvalidExpressionException() {
-    throw new InvalidExpressionException();
   }
 
 }

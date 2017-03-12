@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import br.eti.hussamaismail.calculexpr.evaluation.ExpressionEvaluator;
 import br.eti.hussamaismail.calculexpr.evaluation.ShuntingYardExpressionEvaluator;
+import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 
 /**
  * This class describe the unit tests responsible for evaluating the basic arithmetics expressions
@@ -266,7 +267,7 @@ public class ShuntingYardExpressionEvaluatorTest {
     expression = "a + b * 2";
     assertEquals(44, evaluator.eval(expression), 0.1);
   }
-  
+
   @Test
   public void testSpecialVariable() {
     evaluator.removeAllBindings();
@@ -276,4 +277,63 @@ public class ShuntingYardExpressionEvaluatorTest {
     assertEquals(21, evaluator.eval(expression), 0.1);
   }
 
+  @Test
+  public void testInverseExpressionAndVariable() {
+    evaluator.removeAllBindings();
+    expression = "a=1";
+    assertEquals(1, evaluator.eval(expression), 0.1);
+    expression = "a=-a";
+    assertEquals(-1, evaluator.eval(expression), 0.1);
+  }
+
+  @Test
+  public void testInverseExpressionAndVariable1() {
+    evaluator.removeAllBindings();
+    expression = "a = 1";
+    assertEquals(1, evaluator.eval(expression), 0.1);
+    expression = "a = -a";
+    assertEquals(-1, evaluator.eval(expression), 0.1);
+  }
+
+  @Test
+  public void testInverseExpressionAndVariable2() {
+    evaluator.removeAllBindings();
+    expression = "a = 1";
+    assertEquals(1, evaluator.eval(expression), 0.1);
+    expression = "a = -a";
+    assertEquals(-1, evaluator.eval(expression), 0.1);
+  }
+
+  @Test(expected=InvalidExpressionException.class)
+  public void testExpressionInvalidIdentifier() {
+    evaluator.removeAllBindings();
+    expression = "a = 1";
+    assertEquals(1, evaluator.eval(expression), 0.1);
+    expression = "a = a + b";
+    assertEquals(-1, evaluator.eval(expression), 0.1);
+  }
+  
+  @Test
+  public void testExpression() {
+    expression = "()";
+    assertEquals(0, evaluator.eval(expression), 0.1);  
+  }
+  
+  @Test(expected=InvalidExpressionException.class)
+  public void testInvalidExpression2() {
+    expression = "())";
+    assertEquals(1, evaluator.eval(expression), 0.1);  
+  }
+  
+  @Test(expected=InvalidExpressionException.class)
+  public void testInvalidExpression3() {
+    expression = "(";
+    assertEquals(1, evaluator.eval(expression), 0.1);  
+  }
+  
+  @Test(expected=InvalidExpressionException.class)
+  public void testInvalidExpression4() {
+    expression = ")";
+    assertEquals(1, evaluator.eval(expression), 0.1);  
+  }
 }

@@ -20,7 +20,7 @@ public final class Application {
   public static void main(final String[] args) {
 
     System.out.println("*********************************************");
-    System.out.println("* Calculatrice d'expression            v0.1 *");
+    System.out.println("* Calculette des Expressions           v0.1 *");
     System.out.println("* Hussama Ismail - hussama.ismail@gmail.com *");
     System.out.println("*********************************************");
     System.out.println("\nCommands available:");

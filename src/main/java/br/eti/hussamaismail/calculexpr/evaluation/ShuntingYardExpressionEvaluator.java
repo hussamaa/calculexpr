@@ -14,7 +14,6 @@ import br.eti.hussamaismail.calculexpr.domain.Operand;
 import br.eti.hussamaismail.calculexpr.domain.Operator;
 import br.eti.hussamaismail.calculexpr.domain.Symbol;
 import br.eti.hussamaismail.calculexpr.domain.enums.BracketType;
-import br.eti.hussamaismail.calculexpr.domain.enums.OperatorType;
 import br.eti.hussamaismail.calculexpr.exception.InvalidExpressionException;
 import br.eti.hussamaismail.calculexpr.parse.BasicLexicalAnalyzer;
 import br.eti.hussamaismail.calculexpr.parse.LexicalAnalyzer;
@@ -66,7 +65,7 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
       if (symbol instanceof Operand) {
         operatorStack.push(symbol);
       } else if (symbol instanceof Operator) {
-        performOperator(symbol);
+        performOperator((Operator) symbol);
       } else if (symbol instanceof Function) {
         final Function function = (Function) symbol;
         final Operand operand = (Operand) sortedSymbols.get(++index);
@@ -203,47 +202,68 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
    * 
    * @param symbol
    */
-  private void performOperator(final Symbol symbol) {
-    final Operator operator = (Operator) symbol;
-    if (operator.getType().equals(OperatorType.ASSIGNMENT)) {
-      checkThereIsOneSymbolIntoTheStack();
-      resultBinding.setValue(((Operand) operatorStack.peek()).getValue());
-      resultBinding.setAssigned(true);
+  private void performOperator(final Operator operator) {
+    if (operatorStack.size() < 2) {
+      performArithmeticOperationOneOperand(operator);
     } else {
-      checkThereAreTwoSymbolsIntoTheStack();
-      double result = performArithmeticOperation(operator);
-      operatorStack.push(new Operand(result));
+      performArithmeticOperationTwoOperands(operator);
     }
   }
 
   /**
-   * Executes the correspondent arithmetic operation.
+   * Executes the correspondent arithmetic operation with one operand.
    * 
    * @param operator
    * @return
    */
-  private double performArithmeticOperation(final Operator operator) {
+  private void performArithmeticOperationOneOperand(final Operator operator) {
+    double result = 0;
+    final Operand operand = (Operand) operatorStack.peek();
+    switch (operator.getType()) {
+      case ADDITION:
+        result = (operand.getValue());
+        break;
+      case SUBTRACTION:
+        result = (-operand.getValue());
+        break;
+      case ASSIGNMENT:
+        resultBinding.setValue(operand.getValue());
+        resultBinding.setAssigned(true);
+        break;
+      default:
+        throwsInvalidExpressionException();
+    }
+    operatorStack.push(new Operand(result));
+  }
+
+  /**
+   * Executes the correspondent arithmetic operation with two operands.
+   * 
+   * @param operator
+   * @return
+   */
+  private void performArithmeticOperationTwoOperands(final Operator operator) {
+    double result = 0;
     final Operand rightHandSide = (Operand) operatorStack.pop();
     final Operand leftHandSide = (Operand) operatorStack.pop();
-    double result = 0;
     switch (operator.getType()) {
       case ADDITION:
         result = leftHandSide.getValue() + rightHandSide.getValue();
         break;
-      case DIVISION:
-        result = leftHandSide.getValue() / rightHandSide.getValue();
+      case SUBTRACTION:
+        result = leftHandSide.getValue() - rightHandSide.getValue();
         break;
       case MULTIPLICATION:
         result = leftHandSide.getValue() * rightHandSide.getValue();
         break;
-      case SUBTRACTION:
-        result = leftHandSide.getValue() - rightHandSide.getValue();
+      case DIVISION:
+        result = leftHandSide.getValue() / rightHandSide.getValue();
         break;
       default:
         throwsInvalidExpressionException();
         break;
     }
-    return result;
+    operatorStack.push(new Operand(result));
   }
 
   /**
@@ -293,24 +313,6 @@ public class ShuntingYardExpressionEvaluator implements ExpressionEvaluator {
           identifier.setValue(identifierValue);
         }
       }
-    }
-  }
-
-  /**
-   * Check if there is one element inside the stack.
-   */
-  private void checkThereIsOneSymbolIntoTheStack() {
-    if (operatorStack.size() == 1) {
-      throwsInvalidExpressionException();
-    }
-  }
-
-  /**
-   * Check if there are two symbols inside the stack.
-   */
-  private void checkThereAreTwoSymbolsIntoTheStack() {
-    if (operatorStack.size() < 2) {
-      throwsInvalidExpressionException();
     }
   }
 

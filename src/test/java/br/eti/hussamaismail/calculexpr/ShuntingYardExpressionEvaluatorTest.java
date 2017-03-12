@@ -55,6 +55,13 @@ public class ShuntingYardExpressionEvaluatorTest {
   }
 
   @Test
+  public void testAddition4() {
+    expression = ".1231 + 50 -.12";
+    assertEquals(50.0031, evaluator.eval(expression), 0.1);
+  }
+
+
+  @Test
   public void testSubtraction1() {
     expression = "100-10";
     assertEquals(90, evaluator.eval(expression), 0);
@@ -220,6 +227,24 @@ public class ShuntingYardExpressionEvaluatorTest {
   public void testFunctions3() {
     expression = "3*3+2+sqrt(30)+log(2)+sin(3)+sin(4)+sqrt(3)+2+3-1*3+0-1+4+21+log(45)+25";
     assertEquals(70.54783, evaluator.eval(expression), 0.1);
+  }
+
+  @Test
+  public void testSimpleSignalChange1() {
+    expression = "-(23+2)";
+    assertEquals(-25, evaluator.eval(expression), 0.1);
+  }
+
+  @Test
+  public void testSimpleSignalChange2() {
+    expression = "-(-23+2)";
+    assertEquals(21, evaluator.eval(expression), 0.1);
+  }
+
+  @Test
+  public void testSimpleSignalChange3() {
+    expression = "-(1-2-(2+2))";
+    assertEquals(5.0, evaluator.eval(expression), 0.1);
   }
 
 }

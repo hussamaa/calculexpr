@@ -21,7 +21,6 @@ public final class Application {
 
     System.out.println("*********************************************");
     System.out.println("* Calculette des Expressions           v1.0 *");
-    System.out.println("* Hussama Ismail - hussama.ismail@gmail.com *");
     System.out.println("*********************************************");
     System.out.println("\nCommands available:");
     System.out.println(" :vars            - shows all temporary variables");

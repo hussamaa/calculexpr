@@ -20,7 +20,7 @@ public interface LexicalAnalyzer {
    * @return
    * @throws IOException
    */
-  List<String> getTokens(final String expression);
+  List<String> getTokens(String expression);
 
   /**
    * Generate a list of Symbols based on an expression.
@@ -28,6 +28,6 @@ public interface LexicalAnalyzer {
    * @param tokens
    * @return
    */
-  List<Symbol> getSymbols(final String expression);
+  List<Symbol> getSymbols(String expression);
 
 }

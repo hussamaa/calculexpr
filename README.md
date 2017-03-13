@@ -1,4 +1,4 @@
-# CalculExpr (Calculette des Expressions) [![build status][build_img]][travis]
+# CalculExpr (Calculette des Expressions) [![build status](https://api.travis-ci.org/hussamaa/calculexpr.svg?branch=master)](https://travis-ci.org/hussamaa/calculexpr)
 
 CalculExpr is tool for solving mathematical expressions written in **Java**. In particular, CalculExpr employs **Shunting Yard algorithm** and **Reverse Polish Notation** to solve the mathematical expressions. This tool supports expressions involving numbers, identifiers, basic operators (*e.g.*, **+**, **-**, \*, **/**), and functions (*e.g.,* **sin**, **cos**, **log**, and **sqrt**).
 
